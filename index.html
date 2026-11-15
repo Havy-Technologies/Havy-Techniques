@@ -2127,6 +2127,8 @@ Message: ${messageVal}`;
   </script>
   <!-- ================= HVT AI CHATBOT ================= -->
 
+<!-- ================= HVT AI CHATBOT ================= -->
+
 <style>
 #hvt-launcher {
   position: fixed;
@@ -2200,6 +2202,325 @@ Message: ${messageVal}`;
 
 #hvt-close {
   margin-left: auto;
- 
+  background: none;
+  border: 0;
+  color: #aab5c8;
+  font-size: 23px;
+  cursor: pointer;
+}
+
+#hvt-messages {
+  flex: 1;
+  overflow-y: auto;
+  padding: 17px;
+  display: flex;
+  flex-direction: column;
+  gap: 13px;
+}
+
+.hvt-msg {
+  max-width: 85%;
+  padding: 12px 14px;
+  border-radius: 14px;
+  font-size: 13px;
+  line-height: 1.6;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.hvt-bot {
+  background: #202b40;
+  align-self: flex-start;
+}
+
+.hvt-user {
+  background: linear-gradient(135deg, #6656e9, #3478ee);
+  align-self: flex-end;
+}
+
+.hvt-typing {
+  color: #9baac1;
+  font-size: 12px;
+}
+
+.hvt-suggestions {
+  padding: 0 14px 12px;
+  display: flex;
+  gap: 7px;
+  flex-wrap: wrap;
+}
+
+.hvt-suggestions button {
+  background: #19243a;
+  border: 1px solid #34435e;
+  color: #b9c9e5;
+  border-radius: 20px;
+  padding: 8px 11px;
+  font-size: 11px;
+  cursor: pointer;
+}
+
+.hvt-input {
+  padding: 12px;
+  display: flex;
+  gap: 8px;
+  border-top: 1px solid #29344b;
+  background: #151d2d;
+}
+
+#hvt-input {
+  flex: 1;
+  min-width: 0;
+  background: #202b40;
+  border: 1px solid #34435e;
+  border-radius: 12px;
+  padding: 12px;
+  color: white;
+  outline: none;
+  font-size: 13px;
+}
+
+#hvt-send {
+  width: 43px;
+  border: 0;
+  border-radius: 12px;
+  background: #6558ee;
+  color: white;
+  font-size: 19px;
+  cursor: pointer;
+}
+
+#hvt-send:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* MOBILE RESPONSIVE */
+
+@media(max-width: 480px) {
+  #hvt-chat {
+    width: auto;
+    height: auto;
+    max-height: none;
+    inset: 10px 10px 155px;
+    border-radius: 18px;
+  }
+
+  #hvt-launcher {
+    right: 16px;
+    bottom: 85px;
+  }
+}
+</style>
+
+<!-- FLOATING BUTTON -->
+
+<button id="hvt-launcher" aria-label="Open HVT AI">
+  ✦
+</button>
+
+<!-- CHAT WINDOW -->
+
+<div id="hvt-chat">
+
+  <div class="hvt-head">
+
+    <div class="hvt-logo">H</div>
+
+    <div>
+      <div class="hvt-title">HVT AI Assistant</div>
+      <div class="hvt-status">● Online · Havy Technologies</div>
+    </div>
+
+    <button id="hvt-close">×</button>
+
+  </div>
+
+  <div id="hvt-messages">
+
+    <div class="hvt-msg hvt-bot">
+      Hello! 👋 Welcome to Havy Technologies.
+
+      I'm HVT AI, your virtual technology consultant.
+
+      How can I help you today?
+    </div>
+
+  </div>
+
+  <div class="hvt-suggestions">
+
+    <button data-msg="What services do you offer?">
+      Our Services
+    </button>
+
+    <button data-msg="I want to build a website.">
+      Build a Website
+    </button>
+
+    <button data-msg="How can I contact you?">
+      Contact Us
+    </button>
+
+  </div>
+
+  <div class="hvt-input">
+
+    <input
+      id="hvt-input"
+      type="text"
+      placeholder="Ask me anything..."
+      autocomplete="off"
+    />
+
+    <button id="hvt-send">➤</button>
+
+  </div>
+
+</div>
+
+<script>
+(() => {
+
+  const API =
+    "https://hvt-ai-engine.arvad1406.workers.dev/chat";
+
+  const chat = document.getElementById("hvt-chat");
+  const launcher = document.getElementById("hvt-launcher");
+  const close = document.getElementById("hvt-close");
+  const messages = document.getElementById("hvt-messages");
+  const input = document.getElementById("hvt-input");
+  const send = document.getElementById("hvt-send");
+
+  // OPEN / CLOSE CHAT
+
+  launcher.onclick = () => {
+    chat.classList.toggle("open");
+  };
+
+  close.onclick = () => {
+    chat.classList.remove("open");
+  };
+
+  // ADD MESSAGE
+
+  function addMessage(text, type) {
+
+    const el = document.createElement("div");
+
+    el.className = "hvt-msg " + type;
+    el.textContent = text;
+
+    messages.appendChild(el);
+
+    messages.scrollTop = messages.scrollHeight;
+
+    return el;
+  }
+
+  // SEND MESSAGE TO AI
+
+  async function askAI(message) {
+
+    if (!message.trim() || send.disabled) return;
+
+    addMessage(message, "hvt-user");
+
+    input.value = "";
+    send.disabled = true;
+
+    const typing = addMessage(
+      "HVT AI is typing...",
+      "hvt-typing"
+    );
+
+    try {
+
+      const response = await fetch(API, {
+
+        method: "POST",
+
+        headers: {
+          "Content-Type": "application/json"
+        },
+
+        body: JSON.stringify({
+          message: message
+        })
+
+      });
+
+      const data = await response.json();
+
+      typing.remove();
+
+      if (!response.ok) {
+        throw new Error(
+          data.error || "Server error: " + response.status
+        );
+      }
+
+      const reply =
+        data.reply ||
+        data.response ||
+        data.text ||
+        data.candidates?.[0]?.content?.parts?.[0]?.text;
+
+      if (!reply) {
+        throw new Error("AI response was empty.");
+      }
+
+      addMessage(reply, "hvt-bot");
+
+    } catch (error) {
+
+      typing.remove();
+
+      addMessage(
+        "Connection Error: " + error.message,
+        "hvt-bot"
+      );
+
+      console.error("HVT AI Error:", error);
+
+    }
+
+    send.disabled = false;
+    input.focus();
+
+  }
+
+  // SEND BUTTON
+
+  send.onclick = () => {
+    askAI(input.value);
+  };
+
+  // ENTER KEY
+
+  input.addEventListener("keydown", event => {
+
+    if (event.key === "Enter") {
+      askAI(input.value);
+    }
+
+  });
+
+  // SUGGESTED QUESTIONS
+
+  document.querySelectorAll(
+    ".hvt-suggestions button"
+  ).forEach(button => {
+
+    button.onclick = () => {
+      askAI(button.dataset.msg);
+    };
+
+  });
+
+})();
+</script>
+
+<!-- =============== END HVT AI CHATBOT =============== -->
 </body>
 </html>

@@ -2125,5 +2125,81 @@ Message: ${messageVal}`;
       revealElements.forEach((el) => el.classList.add("visible"));
     }
   </script>
+  <!-- ================= HVT AI CHATBOT ================= -->
+
+<style>
+#hvt-launcher {
+  position: fixed;
+  right: 22px;
+  bottom: 90px;
+  z-index: 99999;
+  width: 62px;
+  height: 62px;
+  border: 0;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #725cff, #267cff);
+  color: white;
+  font-size: 25px;
+  cursor: pointer;
+  box-shadow: 0 8px 35px #526bff66;
+}
+
+#hvt-chat {
+  position: fixed;
+  right: 22px;
+  bottom: 166px;
+  z-index: 99999;
+  width: 370px;
+  height: 530px;
+  max-height: 75vh;
+  background: #101522;
+  color: white;
+  border: 1px solid #29344b;
+  border-radius: 20px;
+  overflow: hidden;
+  display: none;
+  flex-direction: column;
+  font-family: Arial, sans-serif;
+  box-shadow: 0 20px 70px #0008;
+}
+
+#hvt-chat.open {
+  display: flex;
+}
+
+.hvt-head {
+  padding: 19px;
+  background: #171f31;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border-bottom: 1px solid #29344b;
+}
+
+.hvt-logo {
+  width: 42px;
+  height: 42px;
+  border-radius: 13px;
+  display: grid;
+  place-items: center;
+  background: linear-gradient(135deg, #725cff, #267cff);
+  font-weight: bold;
+  font-size: 18px;
+}
+
+.hvt-title {
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.hvt-status {
+  font-size: 11px;
+  color: #55d99b;
+  margin-top: 5px;
+}
+
+#hvt-close {
+  margin-left: auto;
+ 
 </body>
 </html>

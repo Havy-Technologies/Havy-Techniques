@@ -1,4 +1,0 @@
-User-agent: *
-Allow: /
-
-Sitemap: https://havy-technologies.github.io/Havy-Technologies/sitemap.xml
